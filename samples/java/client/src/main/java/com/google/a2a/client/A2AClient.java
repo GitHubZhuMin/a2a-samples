@@ -17,17 +17,20 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * A2A protocol client implementation
+ * A2A协议客户端实现类
  */
 public class A2AClient {
     
-    private final String baseUrl;
-    private final HttpClient httpClient;
-    private final ObjectMapper objectMapper;
+    private final String baseUrl; // 服务器基础URL
+    private final HttpClient httpClient; // HTTP客户端
+    private final ObjectMapper objectMapper; // JSON对象映射器
     
     /**
      * Create a new A2A client
+     * 创建一个新的A2A客户端
      * 
      * @param baseUrl the base URL of the A2A server
+     *                A2A服务器的基础URL
      */
     public A2AClient(String baseUrl) {
         this.baseUrl = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
@@ -39,9 +42,12 @@ public class A2AClient {
     
     /**
      * Create a new A2A client with custom HTTP client
+     * 使用自定义HTTP客户端创建A2A客户端
      * 
      * @param baseUrl the base URL of the A2A server
+     *                A2A服务器的基础URL
      * @param httpClient custom HTTP client
+     *                   自定义HTTP客户端
      */
     public A2AClient(String baseUrl, HttpClient httpClient) {
         this.baseUrl = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
@@ -51,10 +57,14 @@ public class A2AClient {
     
     /**
      * Send a task message to the agent
+     * 向代理发送任务消息
      * 
      * @param params task send parameters
+     *               任务发送参数
      * @return JSON-RPC response containing the task
+     *         包含任务的JSON-RPC响应
      * @throws A2AClientException if the request fails
+     *                           请求失败时抛出异常
      */
     public JSONRPCResponse sendTask(TaskSendParams params) throws A2AClientException {
         JSONRPCRequest request = new JSONRPCRequest(
@@ -69,10 +79,14 @@ public class A2AClient {
     
     /**
      * Get the status of a task
+     * 获取任务状态
      * 
      * @param params task query parameters
+     *               任务查询参数
      * @return JSON-RPC response containing the task
+     *         包含任务的JSON-RPC响应
      * @throws A2AClientException if the request fails
+     *                           请求失败时抛出异常
      */
     public JSONRPCResponse getTask(TaskQueryParams params) throws A2AClientException {
         JSONRPCRequest request = new JSONRPCRequest(
@@ -87,10 +101,14 @@ public class A2AClient {
     
     /**
      * Cancel a task
+     * 取消任务
      * 
      * @param params task ID parameters
+     *               任务ID参数
      * @return JSON-RPC response containing the task
+     *         包含任务的JSON-RPC响应
      * @throws A2AClientException if the request fails
+     *                           请求失败时抛出异常
      */
     public JSONRPCResponse cancelTask(TaskIDParams params) throws A2AClientException {
         JSONRPCRequest request = new JSONRPCRequest(
@@ -105,10 +123,14 @@ public class A2AClient {
     
     /**
      * Send a task with streaming response
+     * 发送任务并接收流式响应
      * 
      * @param params task send parameters
+     *               任务发送参数
      * @param listener event listener for streaming updates
+     *                 用于流式更新的事件监听器
      * @return CompletableFuture that completes when streaming ends
+     *         流结束时完成的CompletableFuture
      */
     public CompletableFuture<Void> sendTaskStreaming(TaskSendParams params, StreamingEventListener listener) {
         return CompletableFuture.runAsync(() -> {
@@ -137,6 +159,7 @@ public class A2AClient {
                 }
                 
                 // Parse streaming response
+                // 解析流式响应
                 String[] lines = response.body().split("\n");
                 for (String line : lines) {
                     if (line.trim().isEmpty()) continue;
@@ -174,9 +197,12 @@ public class A2AClient {
     
     /**
      * Get agent card information
+     * 获取Agent Card信息
      * 
      * @return the agent card
+     *         返回Agent Card
      * @throws A2AClientException if the request fails
+     *                           请求失败时抛出异常
      */
     public AgentCard getAgentCard() throws A2AClientException {
         try {
@@ -201,6 +227,7 @@ public class A2AClient {
     
     /**
      * Perform HTTP request and handle response
+     * 执行HTTP请求并处理响应
      */
     private JSONRPCResponse doRequest(JSONRPCRequest request) throws A2AClientException {
         try {
@@ -219,19 +246,23 @@ public class A2AClient {
             }
             
             // Parse the response
+            // 解析响应内容
             JsonNode responseNode = objectMapper.readTree(response.body());
             
             // Extract basic fields
+            // 提取基础字段
             Object id = responseNode.has("id") ? responseNode.get("id").asText() : null;
             String jsonrpc = responseNode.get("jsonrpc").asText();
             
             // Handle error
+            // 处理错误
             JSONRPCError error = null;
             if (responseNode.has("error") && !responseNode.get("error").isNull()) {
                 error = objectMapper.treeToValue(responseNode.get("error"), JSONRPCError.class);
             }
             
             // Handle result
+            // 处理结果
             Object result = null;
             if (responseNode.has("result") && !responseNode.get("result").isNull()) {
                 result = objectMapper.treeToValue(responseNode.get("result"), Task.class);
@@ -240,6 +271,7 @@ public class A2AClient {
             JSONRPCResponse jsonrpcResponse = new JSONRPCResponse(id, jsonrpc, result, error);
             
             // Check for A2A errors
+            // 检查A2A错误
             if (error != null) {
                 throw new A2AClientException(error.message(), error.code());
             }

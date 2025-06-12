@@ -1,109 +1,109 @@
 # A2A Java Models
 
-This module contains Java record classes translated from Go models for the A2A (Agent-to-Agent) protocol data model definitions.
+本模块包含从 Go 语言模型翻译而来的 Java record 类，用于 A2A（Agent-to-Agent）协议数据模型定义。
 
-## Translation Overview
+## 翻译概述
 
-All Go structs have been translated to Java records, preserving original comments and structure definitions. The main translation rules are as follows:
+所有 Go 结构体已被翻译为 Java record，保留了原有注释和结构定义。主要翻译规则如下：
 
-### Type Mappings
+### 类型映射
 
 - Go `string` → Java `String`
-- Go `*string` → Java `String` (optional fields)
+- Go `*string` → Java `String`（可选字段）
 - Go `int` → Java `int`
-- Go `*int` → Java `Integer` (optional fields)
+- Go `*int` → Java `Integer`（可选字段）
 - Go `bool` → Java `boolean`
-- Go `*bool` → Java `Boolean` (optional fields)
+- Go `*bool` → Java `Boolean`（可选字段）
 - Go `[]Type` → Java `List<Type>`
 - Go `map[string]interface{}` → Java `Map<String, Object>`
 - Go `interface{}` → Java `Object`
 
-### Enum Types
+### 枚举类型
 
-- `TaskState` - Task state enumeration
-- `ErrorCode` - Error code enumeration
+- `TaskState` - 任务状态枚举
+- `ErrorCode` - 错误码枚举
 
-### Core Models
+### 核心模型
 
-#### File Content Related
-- `FileContentBase` - Base structure for file content
-- `FileContent` - File content interface (sealed interface)
-- `FileContentBytes` - Bytes-based file content
-- `FileContentURI` - URI-based file content
+#### 文件内容相关
+- `FileContentBase` - 文件内容基础结构
+- `FileContent` - 文件内容接口（密封接口）
+- `FileContentBytes` - 基于字节的文件内容
+- `FileContentURI` - 基于URI的文件内容
 
-#### Message and Task Related
-- `Part` - Part of a message or artifact
-- `Artifact` - Task output or intermediate file
-- `Message` - Message in the A2A protocol
-- `Task` - A2A task
-- `TaskStatus` - Task status
-- `TaskHistory` - Task history
+#### 消息与任务相关
+- `Part` - 消息或产物的组成部分
+- `Artifact` - 任务输出或中间文件
+- `Message` - A2A 协议中的消息
+- `Task` - A2A 任务
+- `TaskStatus` - 任务状态
+- `TaskHistory` - 任务历史
 
-#### Event Related
-- `TaskStatusUpdateEvent` - Task status update event
-- `TaskArtifactUpdateEvent` - Task artifact update event
+#### 事件相关
+- `TaskStatusUpdateEvent` - 任务状态更新事件
+- `TaskArtifactUpdateEvent` - 任务产物更新事件
 
-#### Agent Related
-- `AgentAuthentication` - Agent authentication information
-- `AgentCapabilities` - Agent capability description
-- `AgentProvider` - Agent provider information
-- `AgentSkill` - Agent skill definition
-- `AgentCard` - Agent metadata card
+#### Agent 相关
+- `AgentAuthentication` - Agent 认证信息
+- `AgentCapabilities` - Agent 能力描述
+- `AgentProvider` - Agent 提供方信息
+- `AgentSkill` - Agent 技能定义
+- `AgentCard` - Agent 元数据卡片
 
-#### JSON-RPC Related
-- `JSONRPCMessageIdentifier` - JSON-RPC message identifier
-- `JSONRPCMessage` - JSON-RPC message base structure
-- `JSONRPCRequest` - JSON-RPC request
-- `JSONRPCError` - JSON-RPC error
-- `JSONRPCResponse` - JSON-RPC response
+#### JSON-RPC 相关
+- `JSONRPCMessageIdentifier` - JSON-RPC 消息标识符
+- `JSONRPCMessage` - JSON-RPC 消息基础结构
+- `JSONRPCRequest` - JSON-RPC 请求
+- `JSONRPCError` - JSON-RPC 错误
+- `JSONRPCResponse` - JSON-RPC 响应
 
-#### Request Parameters
-- `TaskSendParams` - Parameters for sending task messages
-- `TaskIDParams` - Parameters for task ID-based operations
-- `TaskQueryParams` - Parameters for querying task information
-- `PushNotificationConfig` - Push notification configuration
-- `TaskPushNotificationConfig` - Task-specific push notification configuration
+#### 请求参数
+- `TaskSendParams` - 发送任务消息的参数
+- `TaskIDParams` - 基于任务ID的操作参数
+- `TaskQueryParams` - 查询任务信息的参数
+- `PushNotificationConfig` - 推送通知配置
+- `TaskPushNotificationConfig` - 任务专用推送通知配置
 
-#### Concrete Request Classes
-- `SendTaskRequest` - Send task request
-- `GetTaskRequest` - Get task status request
-- `CancelTaskRequest` - Cancel task request
-- `SetTaskPushNotificationRequest` - Set task notification request
-- `GetTaskPushNotificationRequest` - Get task notification configuration request
-- `TaskResubscriptionRequest` - Resubscribe to task updates request
-- `SendTaskStreamingRequest` - Send task streaming request
+#### 具体请求类
+- `SendTaskRequest` - 发送任务请求
+- `GetTaskRequest` - 获取任务状态请求
+- `CancelTaskRequest` - 取消任务请求
+- `SetTaskPushNotificationRequest` - 设置任务通知请求
+- `GetTaskPushNotificationRequest` - 获取任务通知配置请求
+- `TaskResubscriptionRequest` - 重新订阅任务更新请求
+- `SendTaskStreamingRequest` - 发送任务流式请求
 
-#### Response Classes
-- `A2AError` - A2A protocol error
-- `SendTaskResponse` - Send task response
-- `SendTaskStreamingResponse` - Streaming task response
-- `GetTaskResponse` - Get task response
-- `CancelTaskResponse` - Cancel task response
-- `GetTaskHistoryResponse` - Get task history response
-- `SetTaskPushNotificationResponse` - Set task push notification response
-- `GetTaskPushNotificationResponse` - Get task push notification response
+#### 响应类
+- `A2AError` - A2A 协议错误
+- `SendTaskResponse` - 发送任务响应
+- `SendTaskStreamingResponse` - 任务流式响应
+- `GetTaskResponse` - 获取任务响应
+- `CancelTaskResponse` - 取消任务响应
+- `GetTaskHistoryResponse` - 获取任务历史响应
+- `SetTaskPushNotificationResponse` - 设置任务推送通知响应
+- `GetTaskPushNotificationResponse` - 获取任务推送通知响应
 
-## Jackson Annotations
+## Jackson 注解
 
-All records use Jackson annotations for JSON serialization/deserialization:
+所有 record 使用 Jackson 注解进行 JSON 序列化/反序列化：
 
-- `@JsonProperty` - Specify JSON field names
-- `@JsonInclude(JsonInclude.Include.NON_NULL)` - Exclude null value fields
-- `@JsonValue` - For enum type value serialization
-- `@JsonTypeInfo` and `@JsonSubTypes` - For polymorphic type handling
+- `@JsonProperty` - 指定 JSON 字段名
+- `@JsonInclude(JsonInclude.Include.NON_NULL)` - 排除值为 null 的字段
+- `@JsonValue` - 用于枚举类型值序列化
+- `@JsonTypeInfo` 和 `@JsonSubTypes` - 用于多态类型处理
 
-## Dependencies
+## 依赖
 
-The project uses Jackson 2.15.2 for JSON processing:
+本项目使用 Jackson 2.15.2 进行 JSON 处理：
 
 - `jackson-core`
 - `jackson-annotations`
 - `jackson-databind`
 
-## Compilation
+## 编译
 
 ```bash
 mvn compile
 ```
 
-All Java records have been verified through compilation to ensure type safety and correctness. 
+所有 Java record 均已通过编译验证，以确保类型安全和正确性。 

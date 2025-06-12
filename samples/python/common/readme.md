@@ -1,5 +1,5 @@
-## Deprecated
+## 已弃用
 
-Common is deprecated. Use SDK instead.
+Common 已弃用。请改用 SDK。
 
-This folder will be deleted once we complete all the samples to use SDK.
+一旦我们完成所有使用 SDK 的示例，此文件夹将被删除。

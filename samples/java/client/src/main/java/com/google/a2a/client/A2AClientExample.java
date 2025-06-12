@@ -10,15 +10,16 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Example usage of A2A client - AI Translation Bot
+ * A2A客户端用法示例 - AI翻译机器人
  */
 public class A2AClientExample {
     
     public static void main(String[] args) {
-        // Create client
+        // 创建A2A客户端实例
         A2AClient client = new A2AClient("http://localhost:8080");
         
         try {
-            // Example 1: Get agent card
+            // 示例1：获取Agent Card
             System.out.println("=== Getting Translation Bot Agent Card ===");
             AgentCard agentCard = client.getAgentCard();
             System.out.println("Agent: " + agentCard.name());
@@ -27,10 +28,10 @@ public class A2AClientExample {
             System.out.println("Skills: " + agentCard.skills());
             System.out.println();
             
-            // Example 2: Translate French to Chinese
+            // 示例2：法语翻译成中文
             System.out.println("=== Translating French to Chinese ===");
             
-            // Create text part for French to Chinese translation
+            // 构造法语文本部分
             TextPart frenchToChinesePart = new TextPart("Bonjour le monde! Comment allez-vous?", null);
             
             Message frenchToChineseMessage = new Message(
@@ -59,7 +60,7 @@ public class A2AClientExample {
             System.out.println("Task ID: " + frenchToChineseTask.id());
             System.out.println("Translation Status: " + frenchToChineseTask.status().state());
             
-            // Print translation result if available in history
+            // 如果历史中有翻译结果则打印
             if (frenchToChineseTask.history() != null && frenchToChineseTask.history().size() > 1) {
                 Message lastMessage = frenchToChineseTask.history().get(frenchToChineseTask.history().size() - 1);
                 if (lastMessage.role().equals("assistant") && !lastMessage.parts().isEmpty()) {
@@ -71,7 +72,7 @@ public class A2AClientExample {
             }
             System.out.println();
             
-            // Example 3: Translate Chinese to English
+            // 示例3：中文翻译成英文
             System.out.println("=== Translating Chinese to English ===");
             
             TextPart chineseTextPart = new TextPart("你好，世界！欢迎使用AI翻译机器人。", null);
@@ -102,7 +103,7 @@ public class A2AClientExample {
             System.out.println("Task ID: " + chineseTask.id());
             System.out.println("Translation Status: " + chineseTask.status().state());
             
-            // Print translation result if available in history
+            // 如果历史中有翻译结果则打印
             if (chineseTask.history() != null && chineseTask.history().size() > 1) {
                 Message lastMessage = chineseTask.history().get(chineseTask.history().size() - 1);
                 if (lastMessage.role().equals("assistant") && !lastMessage.parts().isEmpty()) {
@@ -114,7 +115,7 @@ public class A2AClientExample {
             }
             System.out.println();
             
-            // Example 4: Translate with streaming (French to English)
+            // 示例4：流式翻译（法语到英语）
             System.out.println("=== Streaming Translation (French to English) ===");
             
             TextPart frenchTextPart = new TextPart("Bonjour le monde! Comment allez-vous?", null);
@@ -157,7 +158,7 @@ public class A2AClientExample {
                 }
             });
             
-            // Wait for streaming to complete
+            // 等待流式翻译完成
             if (streamingLatch.await(30, TimeUnit.SECONDS)) {
                 System.out.println("Streaming translation finished successfully");
             } else {
@@ -165,7 +166,7 @@ public class A2AClientExample {
             }
             System.out.println();
             
-            // Example 5: Get task status for translation
+            // 示例5：获取翻译任务状态
             System.out.println("=== Getting Translation Task Status ===");
             TaskQueryParams queryParams = new TaskQueryParams(frenchToChineseTask.id(), Map.of(), null);
             JSONRPCResponse getResponse = client.getTask(queryParams);
@@ -174,10 +175,10 @@ public class A2AClientExample {
             System.out.println("Final status: " + retrievedTask.status().state());
             System.out.println();
             
-            // Example 6: Cancel a translation task
+            // 示例6：取消翻译任务
             System.out.println("=== Canceling Translation Task ===");
             
-            TextPart cancelTextPart = new TextPart("Diese Übersetzung wird abgebrochen.", null); // German
+            TextPart cancelTextPart = new TextPart("Diese Übersetzung wird abgebrochen.", null); // 德语
             Message cancelMessage = new Message(
                 UUID.randomUUID().toString(),
                 "message",
@@ -195,13 +196,13 @@ public class A2AClientExample {
                 Map.of()  // metadata
             );
             
-            // Send task to be canceled
+            // 发送待取消的任务
             JSONRPCResponse cancelResponse = client.sendTask(cancelParams);
             Task cancelTask = (Task) cancelResponse.result();
             System.out.println("German text to translate: " + cancelTextPart.text());
             System.out.println("Translation task to cancel: " + cancelTask.id());
             
-            // Cancel the task
+            // 取消任务
             TaskIDParams cancelTaskParams = new TaskIDParams(cancelTask.id(), Map.of());
             JSONRPCResponse cancelResult = client.cancelTask(cancelTaskParams);
             Task canceledTask = (Task) cancelResult.result();
